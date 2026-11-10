@@ -29,41 +29,35 @@ const potentiometerCircuit: AnyCircuitElement[] = [
   },
 ]
 
-test.failing(
-  "exports potentiometer max resistance into BOM rows and CSV",
-  async () => {
-    const rows = await convertCircuitJsonToBomRows({
-      circuitJson: potentiometerCircuit,
-    })
+test("exports potentiometer max resistance into BOM rows and CSV", async () => {
+  const rows = await convertCircuitJsonToBomRows({
+    circuitJson: potentiometerCircuit,
+  })
 
-    expect(rows).toHaveLength(1)
-    expect(rows[0]).toMatchObject({
-      designator: "RV1",
-      value: "10k",
-      comment: "10k",
-    })
-    expect(convertBomRowsToCsv(rows)).toContain('"RV1","10k","10k"')
-  },
-)
+  expect(rows).toHaveLength(1)
+  expect(rows[0]).toMatchObject({
+    designator: "RV1",
+    value: "10k",
+    comment: "10k",
+  })
+  expect(convertBomRowsToCsv(rows)).toContain('"RV1","10k","10k"')
+})
 
-test.failing(
-  "keeps potentiometer max resistance when a part is resolved",
-  async () => {
-    const rows = await convertCircuitJsonToBomRows({
-      circuitJson: potentiometerCircuit,
-      resolvePart: async () => ({
-        manufacturer_mpn_pairs: [{ manufacturer: "Example", mpn: "POT-10K" }],
-        supplier_part_number_columns: { "JLCPCB Part #": "C12345" },
-      }),
-    })
-
-    expect(rows[0]).toMatchObject({
-      value: "10k",
-      comment: "POT-10K",
+test("keeps potentiometer max resistance when a part is resolved", async () => {
+  const rows = await convertCircuitJsonToBomRows({
+    circuitJson: potentiometerCircuit,
+    resolvePart: async () => ({
+      manufacturer_mpn_pairs: [{ manufacturer: "Example", mpn: "POT-10K" }],
       supplier_part_number_columns: { "JLCPCB Part #": "C12345" },
-    })
-    expect(convertBomRowsToCsv(rows)).toContain(
-      '"RV1","POT-10K","10k","C12345","C12345"',
-    )
-  },
-)
+    }),
+  })
+
+  expect(rows[0]).toMatchObject({
+    value: "10k",
+    comment: "POT-10K",
+    supplier_part_number_columns: { "JLCPCB Part #": "C12345" },
+  })
+  expect(convertBomRowsToCsv(rows)).toContain(
+    '"RV1","POT-10K","10k","C12345","C12345"',
+  )
+})

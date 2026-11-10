@@ -5,6 +5,7 @@ import type {
   SourceSimpleCapacitor,
   SourceSimpleCrystal,
   SourceSimpleInductor,
+  SourceSimplePotentiometer,
   SourceSimpleResistor,
   SupplierName,
 } from "circuit-json"
@@ -144,6 +145,8 @@ export const convertCircuitJsonToBomRows = async ({
       value = si((source_component as SourceSimpleInductor).inductance)
     if (source_component.ftype === "simple_crystal")
       value = si((source_component as SourceSimpleCrystal).frequency)
+    if (source_component.ftype === "simple_potentiometer")
+      value = si((source_component as SourceSimplePotentiometer).max_resistance)
 
     if (source_component.ftype === "simple_fuse") {
       const fuse = source_component as Extract<
